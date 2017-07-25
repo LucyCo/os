@@ -1,0 +1,23 @@
+EX: 2
+
+FILES:
+README      - this file.
+utheads.cpp - implementation for library of functions which are designed to run multiple thread 
+handler according to given quantum amount.
+makefile    - make file for compilation of this project.
+
+REMARKS:
+
+ANSWERS:
+Answer to question 1:
+(rr) pro - each thread gets the same quantum so the small tasks will be able to make some progress.
+con – if we have tasks with equal runtime, then we have no gain in running them with RR.
+(pq) pro - tasks with higher priority will get done faster.
+con - there is a chance that threads with lower priority will wait a long time before they get to run.
+In our implementation, threads have the same quantum but different priorities, so threads with higher 
+priorities will be done faster. so we gain from having the same quantum.
+
+Answer to question 2:
+A user level event could be printing a word (or any I/O event), which will imply blocking the current 
+thread and resuming when it is done.
+

@@ -1,0 +1,13 @@
+all: CachingFileSystem
+
+CachingFileSystem: CachingFileSystem.o CachingBlock.cpp Log.cpp
+	g++ -Wall `pkg-config fuse --cflags --libs` CachingFileSystem.o -o CachingFileSystem
+	
+CachingFileSystem.o: CachingFileSystem.cpp
+	g++ -Wall  -D_FILE_OFFSET_BITS=64 -c CachingFileSystem.cpp -o CachingFileSystem.o
+
+clean: 
+	rm CachingFileSystem*.o CachingFileSystem
+
+tar:
+	tar cvf ex4.tar CachingFileSystem.cpp Log.cpp Log.h CachingBlock.cpp CachingBlock.h Makefile README

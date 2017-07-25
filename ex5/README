@@ -1,0 +1,59 @@
+EX: 5
+
+FILES:
+README - this file.
+slftp.cpp - implementation for the file trasport protocol using TCP - the server's functions.
+clftp.cpp - implementation for the file trasport protocol using TCP - the client's functions.
+Makefile - make file for compilation of this project.
+performance.jpg - performance evaluation graph.
+
+REMARKS:
+
+ANSWERS:
+1. UDP disadvantages:  Packet loss. A packet is not guaranteed to arrive, but if it does
+arrive then, since the packets are sent in a unit and not stream like in TCP, then it has
+arrived in full.
+Packets arriving out of sync: Packets arriving to their destination not always in the
+order they were originally sent.
+
+General protocol suggestion for avoiding these issues would be to define two sockets for
+each client vs server, which would provide a solution to the possibility of a port clash
+for the client and server. And using one socket for the data packets and the other for the
+Acknowledgment packets which will be sent after each data packet arrive. The client will
+be sending the data packet to the server and wait for the ack in return. There will be a
+timeout value that will be defined in advance. If this fixed time arrives before the ack
+it would result in the assumption that either the packet was lost or the ack was lost and
+the packet will be resent. (if the server receives the same packet twice it will be able
+to know that from the frame value and in return it will send the same ack again and
+discard this packet to avoid packet duplications). If the client receives the ack, it will
+send the next data packet (this will help avoid the packets arriving out of sync).
+
+We will divide the data packet to 3 parts: the first bytes will be the length of the
+entire message (number of bytes equivalent to int variable). The next byte will be the
+message frame (the order in which it left the source). The rest of the packet (fixed size
+will be defined) will contain the message (the part of the entire message that is being
+delivered in this packet). The final byte will be a char symbol to mark weather this is
+the end of the message.
+
+Why is it reliable?
+Taking the measures to number the frames and sending each packet only after making sure
+the previous has arrived will fix out of sync issue. 
+Making sure that each packet has arrived by waiting for ack and also sending the message
+length with this protocol is a reliable system to avoid packet and data loss.
+
+Why is it efficient?
+Of course it's alot less fast than the original UDP, but with opening two socket and by
+that avoiding clash and also sending all the details of the message in one informed packet
+(the data packet) would bring a good result considering the limitations we installed.
+
+The main differences were that we didn't need to receive ack after each send, we just made
+sure that we know the file size firsthand and that the final size of bytes written to the
+new file were equivalent. Also, there was no need for more than one socket for each
+client.
+
+2. Based on the experiments we ran on 7 files (Sizes in KB: 0.004, 0.765, 7.716, 518.586,
+2,569.096, 6,887.400, 61,992.960) with different sizes we can see that files with sizes
+under 1 megabyte hardly differ in their transport time. while files with
+sizes above 1 megabyte which sizes differ from each other by multiplication of 10 will
+also be delivered to their destination 10 times faster (or slower, respectfully to their
+size). This will result in an almost linear graph.
